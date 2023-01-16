@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect, useMemo } from "react";
+import callApi from "../../utilities/CallApi";
+import { HeadTitleTable } from "../../utilities/Constants";
 import Button from "@mui/material/Button";
 import PostList from "../Post/List";
 import Search from "../Search/Search";
+import ListTable from "../Post/ListTable";
 
 const Themes = () => {
     const [isBlogList, setIsBlogList] = useState(true);
@@ -10,6 +12,8 @@ const Themes = () => {
     const [loading, setLoading] = useState("Loading...");
     const [posts, setPost] = useState([]);
     const [filterPosts, setFilterPosts] = useState([]);
+
+    const headTitle = useMemo(() => HeadTitleTable, []);
 
     const handleSelectTheme = (e) => {
         e.preventDefault();
@@ -23,8 +27,7 @@ const Themes = () => {
 
     const handleFetchPost = async () => {
         setLoading("Please wait for a minutes...");
-        await axios
-            .get("https://600e3bc23bb1d100179deb6c.mockapi.io/api/blog/news")
+        callApi()
             .then((res) => {
                 setPost(res.data);
                 setFilterPosts(res.data);
@@ -69,14 +72,21 @@ const Themes = () => {
             <Button onClick={handleSelectTheme} variant="contained">
                 {textOfTheme}
             </Button>
-            <Search onFilter={handleFilter} filterPosts={filterPosts} />
-            <div className="blog-list-wrapper">
-                {isBlogList ? (
-                    <PostList posts={posts} loading={loading} />
-                ) : (
-                    "Table"
-                )}
-            </div>
+
+            {isBlogList ? (
+                <>
+                    <Search onFilter={handleFilter} filterPosts={filterPosts} />
+                    <div className="blog-list-wrapper">
+                        <PostList posts={posts} loading={loading} />
+                    </div>
+                </>
+            ) : (
+                <ListTable
+                    posts={posts}
+                    loading={loading}
+                    columns={headTitle}
+                />
+            )}
         </>
     );
 };

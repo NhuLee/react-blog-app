@@ -142,3 +142,8 @@ h3 {
 #select-author>div[class^=" css"] {
     min-height: 54px !important;
 }
+
+.block-pagination-table {
+    text-align: center;
+    margin: 40px 0;
+}
