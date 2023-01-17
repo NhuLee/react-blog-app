@@ -13,7 +13,7 @@ export const HeadTitleTable = [
     {
         Header: "Date",
         accessor: "date",
-        disableSortBy: true,
+        disableFilters: true,
     },
     {
         Header: "Author name",

@@ -163,7 +163,10 @@ const ListTable = ({ posts, loading, columns }) => {
             <Table stickyHeader aria-label="sticky table" {...getTableProps()}>
                 <TableHead>
                     {headerGroups.map((headerGroup) => (
-                        <TableRow {...headerGroup.getHeaderGroupProps()}>
+                        <TableRow
+                            {...headerGroup.getHeaderGroupProps()}
+                            style={{ verticalAlign: "top" }}
+                        >
                             {headerGroup.headers.map((column) => (
                                 <TableCell
                                     {...column.getHeaderProps(
