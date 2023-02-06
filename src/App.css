@@ -28,6 +28,17 @@
     color: #61dafb;
 }
 
+@media (min-width: 768px) {
+    .userbar {
+        display: flex;
+        flex-flow: row;
+        padding: 20px 0 40px;
+    }
+    .userbar>div:first-child {
+        flex: 1;
+    }
+}
+
 @keyframes App-logo-spin {
     from {
         transform: rotate(0deg);
@@ -55,7 +66,6 @@ h3 {
     display: flex;
     flex-flow: row;
     flex-wrap: wrap;
-    gap: 20px;
 }
 
 .blog-list-wrapper>ul>li {
@@ -67,8 +77,12 @@ h3 {
 
 @media (min-width: 768px) {
     .blog-list-wrapper>ul>li {
-        flex: calc(100% / 3 - 20px);
-        max-width: calc(100% / 3 - 20px);
+        flex: calc(100% / 3 - 15px);
+        max-width: calc(100% / 3 - 15px);
+        margin-bottom: 20px;
+    }
+    .blog-list-wrapper>ul>li:not(:nth-child(3n)) {
+        margin-right: 20px;
     }
     .block-search {
         display: flex;
@@ -83,10 +97,23 @@ h3 {
 
 .card-bottom,
 .card-bottom__avatar,
-.blog-detail__author {
+.blog-detail__author,
+.block-updated {
     display: flex;
     flex-flow: row;
     align-items: center;
+}
+
+.block-updated {
+    margin-top: 20px;
+}
+
+.block-updated>div:first-child {
+    flex: 1
+}
+
+.block-updated button:hover {
+    background: none;
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -146,4 +173,8 @@ h3 {
 .block-pagination-table {
     text-align: center;
     margin: 40px 0;
+}
+
+.form-update-item>* {
+    margin: 10px 0 !important;
 }

@@ -3,7 +3,7 @@ import { List, ListItem } from "@mui/material";
 import PostItem from "./Item";
 import Paginations from "../Paginations/Paginations";
 import BackToList from "../BackToList/BackToList";
-const PostList = ({ posts, loading }) => {
+const PostList = ({ posts, loading, login, onDeleted, onUpdated }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(9);
     const indexOfLastPost = currentPage * postsPerPage;
@@ -27,7 +27,12 @@ const PostList = ({ posts, loading }) => {
             <List>
                 {currentPosts.map((post, index) => (
                     <ListItem key={index} disablePadding={true} gutters={4}>
-                        <PostItem post={post} />
+                        <PostItem
+                            post={post}
+                            checkLogin={login}
+                            checkDelete={onDeleted}
+                            checkUpdate={onUpdated}
+                        />
                     </ListItem>
                 ))}
             </List>

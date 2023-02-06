@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
     Card,
@@ -6,9 +6,53 @@ import {
     CardMedia,
     Avatar,
     Typography,
+    Button,
 } from "@mui/material";
+import FormUpdatePostItem from "../Form/FormUpdatePostItem";
+import FormDeletePostItem from "../Form/FormDeletePostItem";
 
-const PostItem = ({ post }) => {
+const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
+    const [openEdit, setOpenEdit] = useState(false);
+    const [openDel, setOpenDel] = useState(false);
+
+    const handleOpenFormEdit = () => {
+        setOpenEdit(true);
+    };
+
+    const handleCloseFormEdit = () => {
+        setOpenEdit(false);
+    };
+
+    const handleOpenFormDel = () => {
+        setOpenDel(true);
+    };
+
+    const handleCloseFormDel = () => {
+        setOpenDel(false);
+    };
+
+    const renderButtonEdit = () =>
+        checkLogin ? (
+            <div className="block-updated">
+                <div>
+                    <Button variant="outlined" onClick={handleOpenFormEdit}>
+                        Edit
+                    </Button>
+                </div>
+                <div>
+                    <Button
+                        variant="outlined"
+                        onClick={handleOpenFormDel}
+                        style={{ borderColor: "#d3232f", color: "#d3232f" }}
+                    >
+                        Delete
+                    </Button>
+                </div>
+            </div>
+        ) : (
+            ""
+        );
+
     return (
         <Card>
             <Link to={`/blog/${post?.id}`}>
@@ -34,6 +78,19 @@ const PostItem = ({ post }) => {
                     </div>
                     <div className="card-bottom__date">{post?.date}</div>
                 </div>
+                {renderButtonEdit()}
+                <FormUpdatePostItem
+                    post={post}
+                    open={openEdit}
+                    onClose={handleCloseFormEdit}
+                    onUpdate={checkUpdate}
+                />
+                <FormDeletePostItem
+                    post={post}
+                    open={openDel}
+                    onClose={handleCloseFormDel}
+                    onDelete={checkDelete}
+                />
             </CardContent>
         </Card>
     );
