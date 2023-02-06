@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import PostList from "../Post/List";
 import Search from "../Search/Search";
 import ListTable from "../Post/ListTable";
+import LoginToBlog from "../LoginToBlog/LoginToBlog";
 
 const Themes = () => {
     const [isBlogList, setIsBlogList] = useState(true);
@@ -12,6 +13,7 @@ const Themes = () => {
     const [loading, setLoading] = useState("Loading...");
     const [posts, setPost] = useState([]);
     const [filterPosts, setFilterPosts] = useState([]);
+    const [isLogin, setIsLogin] = useState(false);
 
     const headTitle = useMemo(() => HeadTitleTable, []);
 
@@ -25,7 +27,11 @@ const Themes = () => {
         else setTextOfThemes("Go to blog list");
     };
 
-    const handleFetchPost = async () => {
+    const handleLogin = (login) => {
+        setIsLogin(login);
+    };
+
+    const handleFetchPost = () => {
         setLoading("Please wait for a minutes...");
         callApi()
             .then((res) => {
@@ -60,6 +66,20 @@ const Themes = () => {
         setPost([...data]);
     };
 
+    const handleDelete = (dataDelete) => {
+        const data = [...posts].filter((item) => item.id !== dataDelete.id);
+        setPost([...data]);
+    };
+    const handleUpdate = (dataUpdate) => {
+        const data = [...posts].map((post) => {
+            if (post.id === dataUpdate.id) {
+                post = dataUpdate;
+            }
+            return post;
+        });
+        setPost([...data]);
+    };
+
     useEffect(() => {
         handleChangeText();
     });
@@ -69,15 +89,27 @@ const Themes = () => {
     }, []);
     return (
         <>
-            <Button onClick={handleSelectTheme} variant="contained">
-                {textOfTheme}
-            </Button>
-
+            <div className="userbar">
+                <div>
+                    <Button onClick={handleSelectTheme} variant="contained">
+                        {textOfTheme}
+                    </Button>
+                </div>
+                <div>
+                    <LoginToBlog checkLogin={handleLogin} />
+                </div>
+            </div>
             {isBlogList ? (
                 <>
                     <Search onFilter={handleFilter} filterPosts={filterPosts} />
                     <div className="blog-list-wrapper">
-                        <PostList posts={posts} loading={loading} />
+                        <PostList
+                            posts={posts}
+                            loading={loading}
+                            login={isLogin}
+                            onDeleted={handleDelete}
+                            onUpdated={handleUpdate}
+                        />
                     </div>
                 </>
             ) : (
