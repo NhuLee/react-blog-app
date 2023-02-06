@@ -1205,13 +1205,6 @@
   dependencies:
     "@date-io/core" "^2.16.0"
 
-"@date-io/dayjs@^2.15.0":
-  version "2.16.0"
-  resolved "https://registry.npmjs.org/@date-io/dayjs/-/dayjs-2.16.0.tgz"
-  integrity sha512-y5qKyX2j/HG3zMvIxTobYZRGnd1FUW2olZLS0vTj7bEkBQkjd2RO7/FEwDY03Z1geVGlXKnzIATEVBVaGzV4Iw==
-  dependencies:
-    "@date-io/core" "^2.16.0"
-
 "@date-io/luxon@^2.15.0":
   version "2.16.1"
   resolved "https://registry.npmjs.org/@date-io/luxon/-/luxon-2.16.1.tgz"
