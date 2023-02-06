@@ -6,6 +6,7 @@ import PostList from "../Post/List";
 import Search from "../Search/Search";
 import ListTable from "../Post/ListTable";
 import LoginToBlog from "../LoginToBlog/LoginToBlog";
+import { format } from "date-fns";
 
 const Themes = () => {
     const [isBlogList, setIsBlogList] = useState(true);
@@ -54,9 +55,7 @@ const Themes = () => {
             );
         }
         if (searchDate && searchDate !== null) {
-            data = data.filter((post) =>
-                post?.date.toLowerCase().includes(searchDate.toLowerCase())
-            );
+            data = data.filter((post) => post?.date.includes(searchDate));
         }
         if (searchAuthor && searchAuthor.length) {
             data = data.filter((post) =>
@@ -77,6 +76,7 @@ const Themes = () => {
             }
             return post;
         });
+        setFilterPosts([...data]);
         setPost([...data]);
     };
 
