@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import FormUpdatePostItem from "../Form/FormUpdatePostItem";
 import FormDeletePostItem from "../Form/FormDeletePostItem";
+import { format } from "date-fns";
 
 const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
     const [openEdit, setOpenEdit] = useState(false);
@@ -76,7 +77,9 @@ const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
                         />
                         <div className="avatar__name">{post?.author?.name}</div>
                     </div>
-                    <div className="card-bottom__date">{post?.date}</div>
+                    <div className="card-bottom__date">
+                        {format(Date.parse(post?.date), "MMM do, yyyy")}
+                    </div>
                 </div>
                 {renderButtonEdit()}
                 <FormUpdatePostItem
