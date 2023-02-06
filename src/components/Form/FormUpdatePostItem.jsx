@@ -4,17 +4,13 @@ import { useFormik } from "formik";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import DayJsInstance from "dayjs";
-import advancedFormat from "dayjs/plugin/advancedFormat";
 import * as Yup from "yup";
 import { FILE_SIZE, SUPPORTED_FORMATS } from "../../utilities/Constants";
 import callApi from "../../utilities/CallApi";
 
-DayJsInstance.extend(advancedFormat);
-
 const validationSchema = Yup.object({
     title: Yup.string("Title").min(2, "Too Short!").max(100, "Too Long!"),
-    date: Yup.date(),
+    date: Yup.date().nullable(true),
     authorName: Yup.string("Author"),
 });
 
@@ -39,9 +35,7 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            const d = DayJsInstance(values.date).format("MMM Do, YYYY");
-            const updatedValues = { ...values, date: d };
-            await handleUpdateItem(updatedValues);
+            await handleUpdateItem(values);
             onClose(open);
         },
     });
@@ -61,11 +55,7 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <form
-                onSubmit={formik.handleSubmit}
-                style={{ padding: "40px" }}
-                className="form-update-item"
-            >
+            <form onSubmit={formik.handleSubmit} className="form-update-item">
                 <TextField
                     fullWidth
                     id="title"
@@ -76,21 +66,13 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                     error={formik.touched.title && Boolean(formik.errors.title)}
                     helperText={formik.touched.title && formik.errors.title}
                 />
-                <LocalizationProvider
-                    dateAdapter={AdapterDayjs}
-                    dateLibInstance={DayJsInstance}
-                >
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                         label="Date"
                         onChange={(value) =>
                             formik.setFieldValue("date", value)
                         }
-                        value={
-                            typeof formik.values.date === "string"
-                                ? null
-                                : formik.values.date
-                        }
-                        inputFormat="MMM Do, YYYY"
+                        value={formik.values.date}
                         placeHolder
                         renderInput={(params) => (
                             <TextField
@@ -112,7 +94,16 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                     value={formik.values.author.name}
                     onChange={formik.handleChange}
                 />
-
+                <TextField
+                    id="post-content"
+                    className="post-content"
+                    name="content"
+                    label="Content"
+                    multiline
+                    maxRows={100}
+                    value={formik.values.content}
+                    onChange={formik.handleChange}
+                />
                 <Button color="primary" variant="contained" type="submit">
                     Submit
                 </Button>
