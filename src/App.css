@@ -28,15 +28,14 @@
     color: #61dafb;
 }
 
-@media (min-width: 768px) {
-    .userbar {
-        display: flex;
-        flex-flow: row;
-        padding: 20px 0 40px;
-    }
-    .userbar>div:first-child {
-        flex: 1;
-    }
+.userbar {
+    display: flex;
+    flex-flow: row;
+    padding: 20px 0 40px;
+}
+
+.userbar>div:first-child {
+    flex: 1;
 }
 
 @keyframes App-logo-spin {
@@ -73,13 +72,13 @@ h3 {
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     border-radius: 4px;
     box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    margin-bottom: 20px;
 }
 
 @media (min-width: 768px) {
     .blog-list-wrapper>ul>li {
         flex: calc(100% / 3 - 15px);
         max-width: calc(100% / 3 - 15px);
-        margin-bottom: 20px;
     }
     .blog-list-wrapper>ul>li:not(:nth-child(3n)) {
         margin-right: 20px;
