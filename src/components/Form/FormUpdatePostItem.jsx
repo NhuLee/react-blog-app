@@ -7,6 +7,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import * as Yup from "yup";
 import { FILE_SIZE, SUPPORTED_FORMATS } from "../../utilities/Constants";
 import callApi from "../../utilities/CallApi";
+import { format } from "date-fns";
 
 const validationSchema = Yup.object({
     title: Yup.string("Title").min(2, "Too Short!").max(100, "Too Long!"),
@@ -35,7 +36,9 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            await handleUpdateItem(values);
+            const date = format(Date.parse(values.date), "MM/dd/yyyy");
+            const valuesUpdate = { ...values, date };
+            await handleUpdateItem(valuesUpdate);
             onClose(open);
         },
     });

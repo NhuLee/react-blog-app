@@ -63,7 +63,7 @@ const Search = ({ onFilter, filterPosts }) => {
         e.preventDefault();
         const auth = searchAuthor?.map((item) => item?.value);
         const date = searchDate
-            ? format(Date.parse(searchDate), "MMM do, yyyy")
+            ? format(Date.parse(searchDate), "MM/dd/yyyy")
             : "";
         const data = {
             searchTitle,
