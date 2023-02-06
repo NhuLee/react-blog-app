@@ -9,7 +9,6 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 import * as Yup from "yup";
 import { FILE_SIZE, SUPPORTED_FORMATS } from "../../utilities/Constants";
 import callApi from "../../utilities/CallApi";
-// import { format } from "date-fns";
 
 DayJsInstance.extend(advancedFormat);
 
@@ -40,7 +39,9 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            await handleUpdateItem(values);
+            const d = DayJsInstance(values.date).format("MMM Do, YYYY");
+            const updatedValues = { ...values, date: d };
+            await handleUpdateItem(updatedValues);
             onClose(open);
         },
     });
