@@ -32,27 +32,24 @@ const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
         setOpenDel(false);
     };
 
-    const renderButtonEdit = () =>
-        checkLogin ? (
-            <div className="block-updated">
-                <div>
-                    <Button variant="outlined" onClick={handleOpenFormEdit}>
-                        Edit
-                    </Button>
-                </div>
-                <div>
-                    <Button
-                        variant="outlined"
-                        onClick={handleOpenFormDel}
-                        style={{ borderColor: "#d3232f", color: "#d3232f" }}
-                    >
-                        Delete
-                    </Button>
-                </div>
+    const renderButtonEdit = () => (
+        <div className="block-updated">
+            <div>
+                <Button variant="outlined" onClick={handleOpenFormEdit}>
+                    Edit
+                </Button>
             </div>
-        ) : (
-            ""
-        );
+            <div>
+                <Button
+                    variant="outlined"
+                    onClick={handleOpenFormDel}
+                    style={{ borderColor: "#d3232f", color: "#d3232f" }}
+                >
+                    Delete
+                </Button>
+            </div>
+        </div>
+    );
 
     return (
         <Card>
@@ -81,7 +78,7 @@ const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
                         {format(Date.parse(post?.date), "MMM do, yyyy")}
                     </div>
                 </div>
-                {renderButtonEdit()}
+                {checkLogin ? renderButtonEdit() : ""}
                 <FormUpdatePostItem
                     post={post}
                     open={openEdit}

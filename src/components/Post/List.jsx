@@ -2,26 +2,26 @@ import React, { useState } from "react";
 import { List, ListItem } from "@mui/material";
 import PostItem from "./Item";
 import Paginations from "../Paginations/Paginations";
-import BackToList from "../BackToList/BackToList";
-const PostList = ({ posts, loading, login, onDeleted, onUpdated }) => {
+
+const PostList = ({ posts, login, onDeleted, onUpdated }) => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [postsPerPage] = useState(9);
+    const postsPerPage = 9;
     const indexOfLastPost = currentPage * postsPerPage;
     const indexFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = [...posts].slice(indexFirstPost, indexOfLastPost);
     const numberOfPage = Math.ceil(posts.length / postsPerPage);
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const handlePaginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    if (loading.length) return loading;
+    const renderPagination = () => (
+        <div className="block-pagination">
+            <Paginations
+                numberOfPage={numberOfPage}
+                currentPage={currentPage}
+                onPaginate={handlePaginate}
+            />
+        </div>
+    );
 
-    if (!currentPosts || !currentPosts.length) {
-        return (
-            <div style={{ textAlign: "center" }}>
-                <h2>No Result...</h2>
-                <BackToList />
-            </div>
-        );
-    }
     return (
         <>
             <List>
@@ -36,13 +36,7 @@ const PostList = ({ posts, loading, login, onDeleted, onUpdated }) => {
                     </ListItem>
                 ))}
             </List>
-            <div className="block-pagination">
-                <Paginations
-                    numberOfPage={numberOfPage}
-                    currentPage={currentPage}
-                    paginate={paginate}
-                />
-            </div>
+            {currentPosts.length ? renderPagination() : ""}
         </>
     );
 };
