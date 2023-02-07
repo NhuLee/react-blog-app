@@ -7,14 +7,17 @@ import Search from "../Search/Search";
 import ListTable from "../Post/ListTable";
 import LoginToBlog from "../LoginToBlog/LoginToBlog";
 import { format } from "date-fns";
+import Loading from "../Loading/Loading";
+import BackToList from "../BackToList/BackToList";
 
 const Themes = () => {
     const [isBlogList, setIsBlogList] = useState(true);
     const [textOfTheme, setTextOfThemes] = useState("Go to blog list");
-    const [loading, setLoading] = useState("Loading...");
-    const [posts, setPost] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [posts, setPosts] = useState([]);
     const [filterPosts, setFilterPosts] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
+    const [hasOnFilter, setHasOnFilter] = useState("");
 
     const headTitle = useMemo(() => HeadTitleTable, []);
 
@@ -24,8 +27,9 @@ const Themes = () => {
     };
 
     const handleChangeText = () => {
-        if (isBlogList) setTextOfThemes("Go to blog table");
-        else setTextOfThemes("Go to blog list");
+        isBlogList
+            ? setTextOfThemes("Go to blog table")
+            : setTextOfThemes("Go to blog list");
     };
 
     const handleLogin = (login) => {
@@ -33,15 +37,15 @@ const Themes = () => {
     };
 
     const handleFetchPost = () => {
-        setLoading("Please wait for a minutes...");
+        setLoading(true);
         callApi()
             .then((res) => {
-                setPost(res.data);
+                setPosts(res.data);
                 setFilterPosts(res.data);
-                setLoading("");
+                setLoading(false);
             })
             .catch((err) => {
-                setLoading("");
+                setLoading(false);
             });
     };
 
@@ -62,12 +66,12 @@ const Themes = () => {
                 searchAuthor.includes(post?.author?.name)
             );
         }
-        setPost([...data]);
+        setPosts(data);
     };
 
     const handleDelete = (dataDelete) => {
         const data = [...posts].filter((item) => item.id !== dataDelete.id);
-        setPost([...data]);
+        setPosts(data);
     };
     const handleUpdate = (dataUpdate) => {
         const data = [...posts].map((post) => {
@@ -76,9 +80,43 @@ const Themes = () => {
             }
             return post;
         });
-        setFilterPosts([...data]);
-        setPost([...data]);
+        setFilterPosts(data);
+        setPosts(data);
     };
+
+    const renderBlogList = () => (
+        <div className="blog-list-wrapper">
+            <PostList
+                posts={posts}
+                login={isLogin}
+                onDeleted={handleDelete}
+                onUpdated={handleUpdate}
+            />
+        </div>
+    );
+
+    const handleCheckOnFilter = (val) => {
+        setHasOnFilter(val);
+    };
+
+    const renderSearchForm = () => (
+        <Search
+            onFilter={handleFilter}
+            filterPosts={filterPosts}
+            checkOnFilter={handleCheckOnFilter}
+        />
+    );
+
+    const renderBlogTable = () => (
+        <ListTable posts={posts} columns={headTitle} />
+    );
+
+    const renderNoResult = () => (
+        <div style={{ textAlign: "center" }}>
+            <h2>No Result...</h2>
+            <BackToList />
+        </div>
+    );
 
     useEffect(() => {
         handleChangeText();
@@ -99,25 +137,17 @@ const Themes = () => {
                     <LoginToBlog checkLogin={handleLogin} />
                 </div>
             </div>
-            {isBlogList ? (
-                <>
-                    <Search onFilter={handleFilter} filterPosts={filterPosts} />
-                    <div className="blog-list-wrapper">
-                        <PostList
-                            posts={posts}
-                            loading={loading}
-                            login={isLogin}
-                            onDeleted={handleDelete}
-                            onUpdated={handleUpdate}
-                        />
-                    </div>
-                </>
+            {isBlogList ? renderSearchForm() : ""}
+            {loading ? (
+                <Loading />
+            ) : isBlogList ? (
+                !posts.length && hasOnFilter.length ? (
+                    renderNoResult()
+                ) : (
+                    renderBlogList()
+                )
             ) : (
-                <ListTable
-                    posts={posts}
-                    loading={loading}
-                    columns={headTitle}
-                />
+                renderBlogTable()
             )}
         </>
     );

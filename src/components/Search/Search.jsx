@@ -16,7 +16,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { format } from "date-fns";
 
-const Search = ({ onFilter, filterPosts }) => {
+const Search = ({ onFilter, filterPosts, checkOnFilter }) => {
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState(null);
     const [searchAuthor, setSearchAuthor] = useState([]);
@@ -71,6 +71,8 @@ const Search = ({ onFilter, filterPosts }) => {
             searchAuthor: auth,
         };
         onFilter(data);
+        if (!checkOnFilter.length) return;
+        checkOnFilter("on filter");
     };
 
     const handleReset = (e) => {

@@ -191,3 +191,24 @@ h3 {
 .post-content {
     width: 100%;
 }
+
+.form-group-thumb>label {
+    margin: 0 20px 0 0;
+}
+
+.preview-image {
+    margin: 20px 0;
+}
+
+.preview-image img {
+    height: 200px;
+    width: 200px;
+}
+
+.loading {
+    position: relative;
+    top: 20vh;
+    z-index: 10;
+    left: 50%;
+    max-width: 100px;
+}

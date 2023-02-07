@@ -96,7 +96,7 @@ const fuzzyTextFilterFn = (rows, id, filterValue) => {
 // Let the table remove the filter if the string is empty
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const ListTable = ({ posts, loading, columns }) => {
+const ListTable = ({ posts, columns }) => {
     const filterTypes = React.useMemo(
         () => ({
             fuzzyText: fuzzyTextFilterFn,
@@ -155,8 +155,6 @@ const ListTable = ({ posts, loading, columns }) => {
         useSortBy,
         usePagination
     );
-
-    if (loading.length) return loading;
 
     return (
         <TableContainer>

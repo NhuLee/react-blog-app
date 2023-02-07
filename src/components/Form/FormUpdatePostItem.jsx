@@ -5,9 +5,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import * as Yup from "yup";
-import { FILE_SIZE, SUPPORTED_FORMATS } from "../../utilities/Constants";
+import { FILE_SIZE } from "../../utilities/Constants";
 import callApi from "../../utilities/CallApi";
 import { format } from "date-fns";
+import PreviewImage from "../Images/PreviewImage";
 
 const validationSchema = Yup.object({
     title: Yup.string("Title").min(2, "Too Short!").max(100, "Too Long!"),
@@ -27,6 +28,7 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
             thumbnail: {
                 url: post?.thumbnail.url,
                 alt: post?.thumbnail.alt,
+                file: null,
             },
             author: {
                 name: post?.author.name,
@@ -36,14 +38,13 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            const date = format(Date.parse(values.date), "MM/dd/yyyy");
-            const valuesUpdate = { ...values, date };
-            await handleUpdateItem(valuesUpdate);
+            await handleUpdateItem(values);
             onClose(open);
         },
     });
     const handleUpdateItem = (val) => {
-        callApi(`${id}`, "PUT", JSON.stringify(val), {
+        const date = format(Date.parse(val.date), "MM/dd/yyyy");
+        callApi(`${id}`, "PUT", JSON.stringify({ ...val, date }), {
             Accept: "application/json",
             "Content-Type": "application/json",
         })
@@ -54,6 +55,10 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
             .catch((err) => {
                 console.log(err);
             });
+    };
+
+    const handleUpload = (event) => {
+        formik.setFieldValue("thumbnail.file", event.target.files[0]);
     };
 
     return (
@@ -107,6 +112,24 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                     value={formik.values.content}
                     onChange={formik.handleChange}
                 />
+                {/* {console.log("file", typeof formik.values.file)} */}
+                <div className="form-group form-group-thumb">
+                    <label>Thumbnail upload</label>
+                    <Button variant="contained" component="label">
+                        Upload
+                        <input
+                            id="thumbnailFile"
+                            name="thumbnail.file"
+                            type="file"
+                            onChange={handleUpload}
+                            accept="image/*"
+                            hidden
+                        />
+                    </Button>
+                    {formik.values.thumbnail.file && (
+                        <PreviewImage file={formik.values.thumbnail.file} />
+                    )}
+                </div>
                 <Button color="primary" variant="contained" type="submit">
                     Submit
                 </Button>
