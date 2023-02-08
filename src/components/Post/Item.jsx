@@ -56,7 +56,11 @@ const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
             <Link to={`/blog/${post?.id}`}>
                 <CardMedia
                     component="img"
-                    image={post?.thumbnail?.url}
+                    image={
+                        post?.thumbnail?.file
+                            ? post?.thumbnail?.file
+                            : post?.thumbnail?.url
+                    }
                     alt={post?.title}
                 ></CardMedia>
             </Link>

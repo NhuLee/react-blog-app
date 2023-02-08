@@ -1,20 +1,13 @@
-import React, { useState } from "react";
-import Loading from "../Loading/Loading";
+import React from "react";
 
-const PreviewImage = ({ file }) => {
-    const [previewImg, setPreviewImg] = useState(null);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-        setPreviewImg(reader.result);
-    };
-
+const PreviewImage = (props) => {
+    const { urlImage, currentImg } = { ...props };
     return (
         <div className="preview-image">
-            {previewImg ? (
-                <img src={previewImg} alt={file.name} />
+            {urlImage && urlImage.length ? (
+                <img src={urlImage} alt="Preview image" />
             ) : (
-                <Loading />
+                <img src={currentImg} alt="Preview image" />
             )}
         </div>
     );

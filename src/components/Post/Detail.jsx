@@ -19,8 +19,12 @@ const PostDetail = ({ singlePost }) => {
             </div>
             <Typography mt={4} gutterBottom>
                 <img
-                    src={singlePost?.thumbnail?.url}
-                    alt={singlePost?.thumbnail?.alt}
+                    src={
+                        singlePost?.thumbnail?.file
+                            ? singlePost?.thumbnail?.file
+                            : singlePost?.thumbnail?.url
+                    }
+                    alt={singlePost?.thumbnail?.title}
                     loading="lazy"
                 />
             </Typography>

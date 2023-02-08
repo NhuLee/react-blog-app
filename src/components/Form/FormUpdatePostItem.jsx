@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { DialogTitle, Dialog, Button, TextField, Select } from "@mui/material";
 import { useFormik } from "formik";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -13,14 +13,15 @@ import PreviewImage from "../Images/PreviewImage";
 const validationSchema = Yup.object({
     title: Yup.string("Title").min(2, "Too Short!").max(100, "Too Long!"),
     date: Yup.date().nullable(true),
-    authorName: Yup.string("Author"),
 });
 
 const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
-    const handleClose = () => {
-        onClose(open);
-    };
+    const [imgBase64, setImgBase64] = useState(null);
+    const [isDisableRevert, setDisableRevert] = useState(true);
+    const [isDisableSubmit, setIsDisableSubmit] = useState(false);
+    const [isError, setIsError] = useState(false);
     const id = post?.id;
+
     const formik = useFormik({
         initialValues: {
             title: post?.title,
@@ -42,8 +43,14 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
             onClose(open);
         },
     });
+
+    const handleClose = () => {
+        onClose(open);
+    };
+
     const handleUpdateItem = (val) => {
         const date = format(Date.parse(val.date), "MM/dd/yyyy");
+        val.thumbnail.file = imgBase64;
         callApi(`${id}`, "PUT", JSON.stringify({ ...val, date }), {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -55,11 +62,52 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
             .catch((err) => {
                 console.log(err);
             });
+        setDisableRevert(true);
     };
 
     const handleUpload = (event) => {
-        formik.setFieldValue("thumbnail.file", event.target.files[0]);
+        const file = event.target.files[0];
+        formik.setFieldValue("thumbnail.file", file);
+        if (file?.size > FILE_SIZE) {
+            setIsError(true);
+            setDisableRevert(true);
+            setIsDisableSubmit(true);
+        } else {
+            setIsError(false);
+            setIsDisableSubmit(false);
+            setDisableRevert(false);
+            handleConvertFile(file);
+        }
     };
+
+    const handleRevertUpload = () => {
+        setImgBase64(null);
+        setDisableRevert(true);
+    };
+
+    const handleConvertFile = async (file) => {
+        const reader = new FileReader();
+        if (!file) return;
+        await reader.readAsDataURL(file);
+        reader.onload = () => {
+            setImgBase64(reader.result);
+        };
+    };
+
+    const renderErrorMessage = () => (
+        <div className="error">File size too large</div>
+    );
+
+    const renderPreviewImage = () => (
+        <PreviewImage
+            urlImage={imgBase64}
+            currentImg={
+                post?.thumbnail?.file
+                    ? post?.thumbnail?.file
+                    : post?.thumbnail?.url
+            }
+        />
+    );
 
     return (
         <Dialog onClose={handleClose} open={open}>
@@ -96,7 +144,7 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                 </LocalizationProvider>
                 <TextField
                     fullWidth
-                    id="author"
+                    id="authorName"
                     name="author.name"
                     label="Author name"
                     value={formik.values.author.name}
@@ -108,11 +156,10 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                     name="content"
                     label="Content"
                     multiline
-                    maxRows={100}
+                    rows={10}
                     value={formik.values.content}
                     onChange={formik.handleChange}
                 />
-                {/* {console.log("file", typeof formik.values.file)} */}
                 <div className="form-group form-group-thumb">
                     <label>Thumbnail upload</label>
                     <Button variant="contained" component="label">
@@ -126,11 +173,22 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                             hidden
                         />
                     </Button>
-                    {formik.values.thumbnail.file && (
-                        <PreviewImage file={formik.values.thumbnail.file} />
-                    )}
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={handleRevertUpload}
+                        disabled={isDisableRevert}
+                    >
+                        Revert
+                    </Button>
+                    {isError ? renderErrorMessage() : renderPreviewImage()}
                 </div>
-                <Button color="primary" variant="contained" type="submit">
+                <Button
+                    color="primary"
+                    variant="contained"
+                    type="submit"
+                    disabled={isDisableSubmit}
+                >
                     Submit
                 </Button>
             </form>
