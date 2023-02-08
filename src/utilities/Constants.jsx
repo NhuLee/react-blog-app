@@ -37,3 +37,5 @@ export const HeadTitleTable = [
         disableSortBy: true,
     },
 ];
+
+export const FILE_SIZE = 30000;
