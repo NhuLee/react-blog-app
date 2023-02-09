@@ -220,3 +220,11 @@ h3 {
 .avatar__name {
     margin: 0 0 0 5px;
 }
+
+.related-lists {
+    margin: 120px 0 70px;
+}
+
+.related-lists>h3 {
+    margin: 0 0 20px;
+}

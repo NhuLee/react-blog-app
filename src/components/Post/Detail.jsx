@@ -1,6 +1,5 @@
 import React from "react";
 import { Typography, Avatar } from "@mui/material";
-import BackToList from "../BackToList/BackToList";
 const PostDetail = ({ singlePost }) => {
     return (
         <div className="blog-detail">
@@ -29,7 +28,6 @@ const PostDetail = ({ singlePost }) => {
                 />
             </Typography>
             <div className="blog-detail__content">{singlePost?.content}</div>
-            <BackToList />
         </div>
     );
 };
