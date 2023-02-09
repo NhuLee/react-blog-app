@@ -154,6 +154,14 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                     label="Author name"
                     value={formik.values.author.name}
                     onChange={formik.handleChange}
+                    error={
+                        formik.touched?.author?.name &&
+                        Boolean(formik.errors?.author?.name)
+                    }
+                    helperText={
+                        formik.touched?.author?.name &&
+                        formik.errors?.author?.name
+                    }
                 />
                 <TextField
                     id="post-content"
