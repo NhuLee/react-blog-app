@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { DialogTitle, Dialog, Button, TextField, Select } from "@mui/material";
+import React, { useState } from "react";
+import { Dialog, Button, TextField, Select } from "@mui/material";
 import { useFormik } from "formik";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -13,6 +13,11 @@ import PreviewImage from "../Images/PreviewImage";
 const validationSchema = Yup.object({
     title: Yup.string("Title").min(2, "Too Short!").max(100, "Too Long!"),
     date: Yup.date().nullable(true),
+    author: Yup.object({
+        name: Yup.string("Author name")
+            .min(2, "Too Short!")
+            .max(50, "Too Long!"),
+    }),
 });
 
 const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
@@ -94,8 +99,8 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
         };
     };
 
-    const renderErrorMessage = () => (
-        <div className="error">File size too large</div>
+    const renderErrorMessage = (message) => (
+        <div className="error">{message}</div>
     );
 
     const renderPreviewImage = () => (
@@ -181,7 +186,9 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                     >
                         Revert
                     </Button>
-                    {isError ? renderErrorMessage() : renderPreviewImage()}
+                    {isError
+                        ? renderErrorMessage("File size too large")
+                        : renderPreviewImage()}
                 </div>
                 <Button
                     color="primary"

@@ -216,3 +216,7 @@ h3 {
 .error {
     color: #f00;
 }
+
+.avatar__name {
+    margin: 0 0 0 5px;
+}
