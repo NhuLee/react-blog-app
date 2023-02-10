@@ -12,7 +12,13 @@ import FormUpdatePostItem from "../Form/FormUpdatePostItem";
 import FormDeletePostItem from "../Form/FormDeletePostItem";
 import { format } from "date-fns";
 
-const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
+const PostItem = ({
+    post,
+    checkLogin,
+    checkDelete,
+    checkUpdate,
+    selectRelated,
+}) => {
     const [openEdit, setOpenEdit] = useState(false);
     const [openDel, setOpenDel] = useState(false);
 
@@ -30,6 +36,11 @@ const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
 
     const handleCloseFormDel = () => {
         setOpenDel(false);
+    };
+
+    const handleSelectItem = () => {
+        if (!selectRelated) return;
+        selectRelated(post);
     };
 
     const renderButtonEdit = () => (
@@ -62,12 +73,13 @@ const PostItem = ({ post, checkLogin, checkDelete, checkUpdate }) => {
                             : post?.thumbnail?.url
                     }
                     alt={post?.title}
+                    onClick={handleSelectItem}
                 ></CardMedia>
             </Link>
             <CardContent>
                 <Typography gutterBottom variant="h3" component="div">
                     <Link to={`/blog/${post?.id}`}>
-                        <h3>{post?.title}</h3>
+                        <h3 onClick={handleSelectItem}>{post?.title}</h3>
                     </Link>
                 </Typography>
                 <div className="card-bottom">
