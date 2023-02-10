@@ -15,9 +15,9 @@ const BlogDetail = () => {
     const [windowWidth, setWindowWidth] = useState(null);
     const [numberSlides, setNumberSlides] = useState(4);
 
-    const handleFetchPostDetail = () => {
+    const handleFetchPostDetail = (postID) => {
         setIsLoading(true);
-        callApi(`${id}`, "GET", null, null)
+        callApi(`${postID}`, "GET", null, null)
             .then((res) => {
                 setSinglePost(res.data);
                 setIsLoading(false);
@@ -60,8 +60,20 @@ const BlogDetail = () => {
         }
     };
 
+    const relatedPosts = [...posts].filter(
+        (post) =>
+            post?.id !== singlePost?.id &&
+            post?.author?.name.toLowerCase() ===
+                singlePost?.author?.name.toLowerCase()
+    );
+
+    const handleSelectRelated = (val) => {
+        // setSinglePost(val);
+        handleFetchPostDetail(val?.id);
+    };
+
     useEffect(() => {
-        handleFetchPostDetail();
+        handleFetchPostDetail(id);
         handleFetchPosts();
     }, []);
 
@@ -82,9 +94,9 @@ const BlogDetail = () => {
                 <div className="blog-detail">
                     <PostDetail singlePost={singlePost} />
                     <RelatedList
-                        posts={posts}
-                        singlePost={singlePost}
+                        relatedPosts={relatedPosts}
                         numberSlides={numberSlides}
+                        onSelectPostRelated={handleSelectRelated}
                     />
                     <BackToList />
                 </div>

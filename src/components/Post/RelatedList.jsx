@@ -6,14 +6,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 
-const RelatedList = ({ posts, singlePost, numberSlides }) => {
-    if (!posts && !singlePost && !numberSlides) return;
-    const relatedPosts = [...posts].filter(
-        (post) =>
-            post?.id !== singlePost?.id &&
-            post?.author?.name.toLowerCase() ===
-                singlePost?.author?.name.toLowerCase()
-    );
+const RelatedList = ({ relatedPosts, numberSlides, onSelectPostRelated }) => {
+    if (!numberSlides && !onSelectPostRelated && !relatedPosts) return;
     const renderRecentPosts = () => (
         <div className="related-lists">
             <h3>Related Posts</h3>
@@ -31,7 +25,10 @@ const RelatedList = ({ posts, singlePost, numberSlides }) => {
             >
                 {[...relatedPosts].map((post) => (
                     <SwiperSlide key={post?.id}>
-                        <PostItem post={post} />
+                        <PostItem
+                            post={post}
+                            selectRelated={onSelectPostRelated}
+                        />
                     </SwiperSlide>
                 ))}
             </Swiper>

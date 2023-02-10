@@ -129,6 +129,7 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
+                        disableFuture
                         label="Date"
                         onChange={(value) =>
                             formik.setFieldValue("date", value)
