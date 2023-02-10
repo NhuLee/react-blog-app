@@ -1,6 +1,5 @@
 import React from "react";
 import { Typography, Avatar } from "@mui/material";
-import { format } from "date-fns";
 
 const PostDetail = ({ singlePost }) => {
     return (
@@ -15,9 +14,7 @@ const PostDetail = ({ singlePost }) => {
                 />
                 <div className="info">
                     <p>{singlePost?.author?.name}</p>
-                    <p>
-                        {format(Date.parse(singlePost?.date), "MMM do, yyyy")}
-                    </p>
+                    <p>{singlePost?.date}</p>
                 </div>
             </div>
             <Typography mt={4} gutterBottom>
