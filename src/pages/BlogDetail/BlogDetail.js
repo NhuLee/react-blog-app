@@ -4,7 +4,7 @@ import callApi from "../../utilities/CallApi";
 import Container from "@mui/material/Container";
 import PostDetail from "./../../components/Post/Detail";
 import RelatedList from "./../../components/Post/RelatedList";
-import BackToList from "./../../components/BackToList/BackToList";
+import { Link } from "react-router-dom";
 import Loading from "../../components/Loading/Loading";
 
 const BlogDetail = () => {
@@ -74,6 +74,9 @@ const BlogDetail = () => {
 
     useEffect(() => {
         handleFetchPostDetail(id);
+    }, [id]);
+
+    useEffect(() => {
         handleFetchPosts();
     }, []);
 
@@ -98,7 +101,21 @@ const BlogDetail = () => {
                         numberSlides={numberSlides}
                         onSelectPostRelated={handleSelectRelated}
                     />
-                    <BackToList />
+                    <Link
+                        to="/"
+                        style={{
+                            background: "#1976d2",
+                            minWidth: "64px",
+                            padding: "6px 16px",
+                            borderRadius: "4px",
+                            color: "#fff",
+                            margin: "0 0 80px",
+                            display: "inline-block",
+                            textTransform: "uppercase",
+                        }}
+                    >
+                        Back to posts list
+                    </Link>
                 </div>
             )}
         </Container>

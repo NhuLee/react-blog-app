@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "@mui/material/Container";
-import Themes from "./../../components/Themes/Themes";
+import Themes from "../../components/Themes/Themes";
 
 const Home = () => {
     return (

@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { List, ListItem } from "@mui/material";
 import PostItem from "./Item";
 import Paginations from "../Paginations/Paginations";
+import { PostsTheme } from "./../Themes/ThemesContext";
 
-const PostList = ({ posts, login, onDeleted, onUpdated }) => {
+const PostList = () => {
+    const postThemeContext = useContext(PostsTheme);
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 9;
     const indexOfLastPost = currentPage * postsPerPage;
     const indexFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = [...posts].slice(indexFirstPost, indexOfLastPost);
-    const numberOfPage = Math.ceil(posts.length / postsPerPage);
+    const currentPosts = [...postThemeContext.posts].slice(
+        indexFirstPost,
+        indexOfLastPost
+    );
+    const numberOfPage = Math.ceil(
+        postThemeContext.posts.length / postsPerPage
+    );
     const handlePaginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const renderPagination = () => (
@@ -27,16 +34,11 @@ const PostList = ({ posts, login, onDeleted, onUpdated }) => {
             <List>
                 {currentPosts.map((post, index) => (
                     <ListItem key={index} disablePadding={true} gutters={4}>
-                        <PostItem
-                            post={post}
-                            checkLogin={login}
-                            checkDelete={onDeleted}
-                            checkUpdate={onUpdated}
-                        />
+                        <PostItem post={post} />
                     </ListItem>
                 ))}
             </List>
-            {currentPosts.length ? renderPagination() : ""}
+            {postThemeContext.posts.length > postsPerPage && renderPagination()}
         </>
     );
 };

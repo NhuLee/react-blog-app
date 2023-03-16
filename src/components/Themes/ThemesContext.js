@@ -1,16 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, createContext } from "react";
 import callApi from "../../utilities/CallApi";
-import { HeadTitleTable } from "../../utilities/Constants";
-import Button from "@mui/material/Button";
-import PostList from "../Post/List";
-import Search from "../Search/Search";
-import ListTable from "../Post/ListTable";
-import LoginToBlog from "../LoginToBlog/LoginToBlog";
-import { format } from "date-fns";
-import Loading from "../Loading/Loading";
-import BackToList from "../BackToList/BackToList";
 
-const Themes = () => {
+const PostsTheme = createContext();
+
+function PostsThemeProvider({ children }) {
     const [isBlogList, setIsBlogList] = useState(true);
     const [textOfTheme, setTextOfThemes] = useState("Go to blog list");
     const [loading, setLoading] = useState(false);
@@ -18,8 +11,6 @@ const Themes = () => {
     const [filterPosts, setFilterPosts] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
     const [hasOnFilter, setHasOnFilter] = useState("");
-
-    const headTitle = useMemo(() => HeadTitleTable, []);
 
     const handleSelectTheme = (e) => {
         e.preventDefault();
@@ -84,73 +75,31 @@ const Themes = () => {
         setPosts(data);
     };
 
-    const renderBlogList = () => (
-        <div className="blog-list-wrapper">
-            <PostList
-                posts={posts}
-                login={isLogin}
-                onDeleted={handleDelete}
-                onUpdated={handleUpdate}
-            />
-        </div>
-    );
-
     const handleCheckOnFilter = (val) => {
         setHasOnFilter(val);
     };
 
-    const renderSearchForm = () => (
-        <Search
-            onFilter={handleFilter}
-            filterPosts={filterPosts}
-            checkOnFilter={handleCheckOnFilter}
-        />
-    );
+    const postsVal = {
+        isBlogList,
+        textOfTheme,
+        loading,
+        posts,
+        filterPosts,
+        isLogin,
+        hasOnFilter,
+        handleSelectTheme,
+        handleChangeText,
+        handleLogin,
+        handleFetchPost,
+        handleFilter,
+        handleDelete,
+        handleUpdate,
+        handleCheckOnFilter,
+    };
 
-    const renderBlogTable = () => (
-        <ListTable posts={posts} columns={headTitle} />
-    );
-
-    const renderNoResult = () => (
-        <div style={{ textAlign: "center" }}>
-            <h2>No Result...</h2>
-            <BackToList />
-        </div>
-    );
-
-    useEffect(() => {
-        handleChangeText();
-    });
-
-    useEffect(() => {
-        handleFetchPost();
-    }, []);
     return (
-        <>
-            <div className="userbar">
-                <div>
-                    <Button onClick={handleSelectTheme} variant="contained">
-                        {textOfTheme}
-                    </Button>
-                </div>
-                <div>
-                    <LoginToBlog checkLogin={handleLogin} />
-                </div>
-            </div>
-            {isBlogList ? renderSearchForm() : ""}
-            {loading ? (
-                <Loading />
-            ) : isBlogList ? (
-                !posts.length && hasOnFilter.length ? (
-                    renderNoResult()
-                ) : (
-                    renderBlogList()
-                )
-            ) : (
-                renderBlogTable()
-            )}
-        </>
+        <PostsTheme.Provider value={postsVal}>{children}</PostsTheme.Provider>
     );
-};
+}
 
-export default Themes;
+export { PostsTheme, PostsThemeProvider };

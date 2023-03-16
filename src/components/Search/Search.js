@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import Select from "react-select";
 import {
     List,
@@ -15,8 +15,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { format } from "date-fns";
+import { PostsTheme } from "./../Themes/ThemesContext";
 
-const Search = ({ onFilter, filterPosts, checkOnFilter }) => {
+const Search = () => {
+    const postsThemeContext = useContext(PostsTheme);
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState(null);
     const [searchAuthor, setSearchAuthor] = useState([]);
@@ -36,8 +38,8 @@ const Search = ({ onFilter, filterPosts, checkOnFilter }) => {
     };
 
     const renderOptionAuthors = () => {
-        if (!filterPosts) return;
-        let data = [...filterPosts].map((post) => ({
+        if (!postsThemeContext.filterPosts) return;
+        let data = [...postsThemeContext.filterPosts].map((post) => ({
             value: post?.author?.name,
             label: post?.author?.name,
         }));
@@ -59,7 +61,7 @@ const Search = ({ onFilter, filterPosts, checkOnFilter }) => {
     };
 
     const handleSearch = (e) => {
-        if (!onFilter) return;
+        if (!postsThemeContext.handleFilter) return;
         e.preventDefault();
         const auth = searchAuthor?.map((item) => item?.value);
         const date = searchDate
@@ -70,20 +72,20 @@ const Search = ({ onFilter, filterPosts, checkOnFilter }) => {
             searchDate: date,
             searchAuthor: auth,
         };
-        onFilter(data);
-        if (!checkOnFilter.length) return;
-        checkOnFilter("on filter");
+        postsThemeContext.handleFilter(data);
+        if (!postsThemeContext.handleCheckOnFilter.length) return;
+        postsThemeContext.handleCheckOnFilter("on filter");
     };
 
     const handleReset = (e) => {
-        if (!onFilter) return;
+        if (!postsThemeContext.handleFilter) return;
         e.preventDefault();
         inputTitleRef.current.value = "";
         inputAuthRef.current.value = null;
         setSearchTitle("");
         setSearchDate(null);
         setSearchAuthor(null);
-        onFilter("");
+        postsThemeContext.handleFilter("");
     };
     return (
         <>
