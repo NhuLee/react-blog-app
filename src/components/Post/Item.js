@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import {
     Card,
@@ -8,17 +8,14 @@ import {
     Typography,
     Button,
 } from "@mui/material";
-import FormUpdatePostItem from "../Form/FormUpdatePostItem";
-import FormDeletePostItem from "../Form/FormDeletePostItem";
+import FormUpdatePostItem from "../Form/UpdatePostItem";
+import FormDeletePostItem from "../Form/DeletePostItem";
 import { format } from "date-fns";
+import { PostsTheme } from "../Themes/ThemesContext";
 
-const PostItem = ({
-    post,
-    checkLogin,
-    checkDelete,
-    checkUpdate,
-    selectRelated,
-}) => {
+const PostItem = ({ post, selectRelated }) => {
+    const postsThemeContext = useContext(PostsTheme);
+
     const [openEdit, setOpenEdit] = useState(false);
     const [openDel, setOpenDel] = useState(false);
 
@@ -94,18 +91,16 @@ const PostItem = ({
                         {format(Date.parse(post?.date), "MMM do, yyyy")}
                     </div>
                 </div>
-                {checkLogin ? renderButtonEdit() : ""}
+                {postsThemeContext.isLogin && renderButtonEdit()}
                 <FormUpdatePostItem
                     post={post}
                     open={openEdit}
                     onClose={handleCloseFormEdit}
-                    onUpdate={checkUpdate}
                 />
                 <FormDeletePostItem
                     post={post}
                     open={openDel}
                     onClose={handleCloseFormDel}
-                    onDelete={checkDelete}
                 />
             </CardContent>
         </Card>

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { DialogTitle, Dialog, Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import callApi from "../../utilities/CallApi";
+import { PostsTheme } from "../Themes/ThemesContext";
 
-const FormDeletePostItem = ({ post, open, onClose, onDelete }) => {
+const FormDeletePostItem = ({ post, open, onClose }) => {
+    const postsThemeContext = useContext(PostsTheme);
     const validateSChema = Yup.object().shape({
         title: Yup.string().oneOf([post?.title]).required("Required"),
     });
@@ -24,8 +26,8 @@ const FormDeletePostItem = ({ post, open, onClose, onDelete }) => {
     const handleDeletePostItem = () => {
         callApi(`${id}`, "DELETE", null, null)
             .then((res) => {
-                if (!onDelete) return;
-                onDelete(res.data);
+                if (!postsThemeContext) return;
+                postsThemeContext.handleDelete(res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -46,7 +48,6 @@ const FormDeletePostItem = ({ post, open, onClose, onDelete }) => {
                     fullWidth
                     id="title"
                     name="title"
-                    label=""
                     placeholder={post?.title}
                     value={formik.values.title}
                     onChange={formik.handleChange}

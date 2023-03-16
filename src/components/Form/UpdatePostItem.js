@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Dialog, Button, TextField, Select } from "@mui/material";
+import React, { useState, useContext } from "react";
+import { Dialog, Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -9,6 +9,7 @@ import { FILE_SIZE } from "../../utilities/Constants";
 import callApi from "../../utilities/CallApi";
 import { format } from "date-fns";
 import PreviewImage from "../Images/PreviewImage";
+import { PostsTheme } from "../Themes/ThemesContext";
 
 const validationSchema = Yup.object({
     title: Yup.string("Title").min(2, "Too Short!").max(100, "Too Long!"),
@@ -20,7 +21,8 @@ const validationSchema = Yup.object({
     }),
 });
 
-const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
+const FormUpdatePostItem = ({ open, onClose, post }) => {
+    const postsThemeContext = useContext(PostsTheme);
     const [imgBase64, setImgBase64] = useState(null);
     const [isDisableRevert, setDisableRevert] = useState(true);
     const [isDisableSubmit, setIsDisableSubmit] = useState(false);
@@ -61,8 +63,8 @@ const FormUpdatePostItem = ({ open, onClose, post, onUpdate }) => {
             "Content-Type": "application/json",
         })
             .then((res) => {
-                if (!onUpdate) return;
-                onUpdate(res.data);
+                if (!postsThemeContext) return;
+                postsThemeContext.handleUpdate(res.data);
             })
             .catch((err) => {
                 console.log(err);

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useContext } from "react";
 import {
     Table,
     TableBody,
@@ -16,6 +16,8 @@ import {
     useAsyncDebounce,
 } from "react-table";
 import { matchSorter } from "match-sorter";
+import { PostsTheme } from "./../Themes/ThemesContext";
+import { HeadTitleTable } from "../../utilities/Constants";
 
 const GlobalFilter = ({
     preGlobalFilteredRows,
@@ -96,7 +98,10 @@ const fuzzyTextFilterFn = (rows, id, filterValue) => {
 // Let the table remove the filter if the string is empty
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const ListTable = ({ posts, columns }) => {
+const ListTable = () => {
+    const postsThemeContext = useContext(PostsTheme);
+    const headTitle = useMemo(() => HeadTitleTable, []);
+
     const filterTypes = React.useMemo(
         () => ({
             fuzzyText: fuzzyTextFilterFn,
@@ -121,7 +126,7 @@ const ListTable = ({ posts, columns }) => {
         []
     );
 
-    const data = useMemo(() => [...posts], []);
+    const data = useMemo(() => [...postsThemeContext.posts], []);
 
     const {
         getTableProps,
@@ -144,7 +149,7 @@ const ListTable = ({ posts, columns }) => {
         state: { pageIndex, pageSize },
     } = useTable(
         {
-            columns,
+            columns: headTitle,
             data,
             defaultColumn,
             filterTypes,
