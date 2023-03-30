@@ -1,4 +1,5 @@
 import React, { useState, useRef, useContext } from "react";
+import { useSearchParams } from "react-router-dom";
 import Select from "react-select";
 import {
     List,
@@ -18,28 +19,75 @@ import { format } from "date-fns";
 import { PostsTheme } from "./../Themes/ThemesContext";
 
 const Search = () => {
-    const postsThemeContext = useContext(PostsTheme);
-    const [searchTitle, setSearchTitle] = useState("");
-    const [searchDate, setSearchDate] = useState(null);
-    const [searchAuthor, setSearchAuthor] = useState([]);
-    const inputTitleRef = useRef(null);
-    const inputAuthRef = useRef(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [query, setQuery] = useState({});
 
-    const handleSearchTitle = () => {
-        setSearchTitle(inputTitleRef.current.value);
+    const postsThemeContext = useContext(PostsTheme);
+    const { handleFilter, filterPosts, handleCheckOnFilter, ...args } =
+        postsThemeContext;
+
+    const [searchTitle, setSearchTitle] = useState(
+        () => searchParams.get("title") || ""
+    );
+    const [searchDate, setSearchDate] = useState(
+        () => null ?? searchParams.get("date")
+    );
+    const [searchAuthor, setSearchAuthor] = useState(() => {
+        const authorList = searchParams.getAll("author") ?? [];
+        const authorFilter =
+            authorList &&
+            authorList.map((author) => ({
+                value: author,
+                label: author,
+            }));
+        return authorFilter ?? [];
+    });
+
+    const inputTitleRef = useRef();
+
+    const handleSetQuery = (val, key) => {
+        const attributeObj = Object.assign({ ...query }, { [key]: val });
+        cleanData(attributeObj);
+        setQuery(attributeObj);
+        setSearchParams(attributeObj);
+    };
+
+    const handleSearchTitle = (e) => {
+        setSearchTitle(e.target.value);
+
+        // Set title query param
+        handleSetQuery(e.target.value, "title");
     };
 
     const handleSearchDate = (date) => {
-        setSearchDate(date);
+        const dateFormatted = format(Date.parse(date), "MM/dd/yyyy");
+        setSearchDate(dateFormatted);
+
+        // Set date query param
+        handleSetQuery(dateFormatted, "date");
     };
 
     const handleSelectAuth = (e) => {
         setSearchAuthor(e);
+
+        // Set author query param
+        if (!e.length) {
+            for (var key in query) {
+                if (key.startsWith("author")) {
+                    delete query[key];
+                    setSearchParams(query);
+                }
+            }
+        }
+        const authorFilter = [...e].reduce((accumulator, item) => {
+            return accumulator.concat(item.value);
+        }, []);
+        handleSetQuery(authorFilter, "author");
     };
 
     const renderOptionAuthors = () => {
-        if (!postsThemeContext.filterPosts) return;
-        let data = [...postsThemeContext.filterPosts].map((post) => ({
+        if (!filterPosts) return;
+        const data = [...filterPosts].map((post) => ({
             value: post?.author?.name,
             label: post?.author?.name,
         }));
@@ -61,31 +109,40 @@ const Search = () => {
     };
 
     const handleSearch = (e) => {
-        if (!postsThemeContext.handleFilter) return;
+        if (!handleFilter) return;
         e.preventDefault();
         const auth = searchAuthor?.map((item) => item?.value);
-        const date = searchDate
-            ? format(Date.parse(searchDate), "MM/dd/yyyy")
-            : "";
         const data = {
             searchTitle,
-            searchDate: date,
+            searchDate,
             searchAuthor: auth,
         };
-        postsThemeContext.handleFilter(data);
-        if (!postsThemeContext.handleCheckOnFilter.length) return;
-        postsThemeContext.handleCheckOnFilter("on filter");
+        cleanData(data);
+        handleFilter(data);
+        if (!handleCheckOnFilter.length) return;
+        handleCheckOnFilter("on filter");
     };
 
     const handleReset = (e) => {
-        if (!postsThemeContext.handleFilter) return;
+        if (!handleFilter) return;
         e.preventDefault();
-        inputTitleRef.current.value = "";
-        inputAuthRef.current.value = null;
         setSearchTitle("");
         setSearchDate(null);
-        setSearchAuthor(null);
-        postsThemeContext.handleFilter("");
+        setSearchAuthor([]);
+        handleFilter("");
+        setQuery({});
+        setSearchParams({});
+
+        inputTitleRef.current.focus();
+    };
+
+    const cleanData = (obj) => {
+        for (let propName in obj) {
+            if (!obj[propName]) {
+                delete obj[propName];
+            }
+        }
+        return obj;
     };
     return (
         <>
@@ -96,6 +153,7 @@ const Search = () => {
                             Search by post title
                         </InputLabel>
                         <Input
+                            value={searchTitle}
                             inputRef={inputTitleRef}
                             id="search-title"
                             startAdornment={
@@ -119,7 +177,6 @@ const Search = () => {
                 </ListItem>
                 <ListItem>
                     <Select
-                        ref={inputAuthRef}
                         id="select-author"
                         name="select-author"
                         placeholder={"Author"}
